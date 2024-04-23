@@ -24,6 +24,7 @@ jobs:
           working-directory: example
       - name: Show ghc & cabal version
         run: |
+          export PATH=/usr/local/bin:${PATH}
           type ghc
           type cabal
           ghc --version
