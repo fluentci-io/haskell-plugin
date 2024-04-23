@@ -25,6 +25,7 @@ jobs:
       - name: Show ghc & cabal version
         run: |
           export PATH=/usr/local/bin:${PATH}
+          sudo apt-get install -y libtinfo5 libtinfo6
           type ghc
           type cabal
           ghc --version
