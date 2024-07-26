@@ -5,9 +5,17 @@ on:
       - main
 jobs:
   example:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+      - name: Uninstall ghcup
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/.ghcup
       - name: Setup example
         run: |
           mkdir -p example/.fluentci
@@ -22,10 +30,13 @@ jobs:
           args: |
             setup
           working-directory: example
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get install -y libtinfo5 libtinfo6
       - name: Show ghc & cabal version
         run: |
-          export PATH=/usr/local/bin:${PATH}
-          sudo apt-get install -y libtinfo5 libtinfo6
           type ghc
           type cabal
           ghc --version
